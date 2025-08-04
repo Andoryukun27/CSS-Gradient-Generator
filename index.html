@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Create beautiful CSS gradients with live preview and export functionality">
+    <title>CSS Gradient Generator - Create Beautiful Gradients</title>
+    
+    <!-- Preload critical fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <!-- Skip to main content for accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <!-- Header -->
+    <header class="header" role="banner">
+        <div class="container">
+            <div class="header__content">
+                <div class="header__brand">
+                    <div class="header__logo">
+                        <svg class="header__icon" width="32" height="32" viewBox="0 0 32 32" aria-hidden="true">
+                            <defs>
+                                <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#2563eb"/>
+                                    <stop offset="50%" style="stop-color:#7c3aed"/>
+                                    <stop offset="100%" style="stop-color:#dc2626"/>
+                                </linearGradient>
+                            </defs>
+                            <rect width="32" height="32" rx="8" fill="url(#logo-gradient)"/>
+                            <path d="M8 12h16v8H8z" fill="white" opacity="0.9"/>
+                        </svg>
+                        <h1 class="header__title">CSS Gradient Generator</h1>
+                    </div>
+                    <p class="header__subtitle">Create beautiful gradients with live preview</p>
+                </div>
+                
+                <div class="header__actions">
+                    <button type="button" class="btn btn--ghost" aria-label="Help and documentation">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
+                        </svg>
+                        Help
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content" class="main" role="main">
+        <div class="container">
+            <div class="app-layout">
+                
+                <!-- Control Panel -->
+                <aside class="controls-panel" role="complementary" aria-label="Gradient controls">
+                    
+                    <!-- Gradient Type Selection -->
+                    <section class="control-section">
+                        <h2 class="control-section__title">Gradient Type</h2>
+                        <div class="gradient-type-selector" role="radiogroup" aria-label="Select gradient type">
+                            <label class="radio-card">
+                                <input type="radio" name="gradient-type" value="linear" checked aria-describedby="linear-desc">
+                                <span class="radio-card__content">
+                                    <span class="radio-card__icon">
+                                        <div class="gradient-preview gradient-preview--linear"></div>
+                                    </span>
+                                    <span class="radio-card__label">Linear</span>
+                                </span>
+                            </label>
+                            
+                            <label class="radio-card">
+                                <input type="radio" name="gradient-type" value="radial" aria-describedby="radial-desc">
+                                <span class="radio-card__content">
+                                    <span class="radio-card__icon">
+                                        <div class="gradient-preview gradient-preview--radial"></div>
+                                    </span>
+                                    <span class="radio-card__label">Radial</span>
+                                </span>
+                            </label>
+                            
+                            <label class="radio-card">
+                                <input type="radio" name="gradient-type" value="conic" aria-describedby="conic-desc">
+                                <span class="radio-card__content">
+                                    <span class="radio-card__icon">
+                                        <div class="gradient-preview gradient-preview--conic"></div>
+                                    </span>
+                                    <span class="radio-card__label">Conic</span>
+                                </span>
+                            </label>
+                        </div>
+                        
+                        <!-- Screen reader descriptions -->
+                        <div class="sr-only">
+                            <div id="linear-desc">Linear gradient flows in a straight line</div>
+                            <div id="radial-desc">Radial gradient radiates from a center point</div>
+                            <div id="conic-desc">Conic gradient rotates around a center point</div>
+                        </div>
+                    </section>
+
+                    <!-- Color Stops -->
+                    <section class="control-section">
+                        <h2 class="control-section__title">Color Stops</h2>
+                        
+                        <!-- Color Stop Slider -->
+                        <div class="color-stops-container">
+                            <div class="color-stops-track" role="slider" aria-label="Color stops" tabindex="0">
+                                <div class="color-stops-background"></div>
+                                <div class="color-stops-list" id="color-stops-list">
+                                    <!-- Color stops will be dynamically added here -->
+                                </div>
+                            </div>
+                            <div class="color-stops-labels">
+                                <span>0%</span>
+                                <span>50%</span>
+                                <span>100%</span>
+                            </div>
+                        </div>
+                        
+                        <button type="button" class="btn btn--secondary btn--small add-color-stop" aria-label="Add new color stop">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                                <path d="M8 2a1 1 0 011 1v4h4a1 1 0 110 2H9v4a1 1 0 11-2 0V9H3a1 1 0 110-2h4V3a1 1 0 011-1z"/>
+                            </svg>
+                            Add Color Stop
+                        </button>
+                    </section>
+
+                    <!-- Gradient Properties -->
+                    <section class="control-section">
+                        <h2 class="control-section__title">Properties</h2>
+                        
+                        <!-- Linear Gradient Controls -->
+                        <div class="gradient-controls gradient-controls--linear">
+                            <div class="form-group">
+                                <label for="gradient-angle" class="form-label">Angle</label>
+                                <div class="input-group">
+                                    <input type="range" id="gradient-angle" class="range-input" min="0" max="360" value="90" aria-describedby="angle-value">
+                                    <input type="number" id="angle-value" class="number-input" min="0" max="360" value="90" aria-label="Angle in degrees">
+                                    <span class="input-suffix">°</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Radial Gradient Controls -->
+                        <div class="gradient-controls gradient-controls--radial" hidden>
+                            <div class="form-group">
+                                <label for="radial-position-x" class="form-label">Position</label>
+                                <div class="position-controls">
+                                    <div class="input-group">
+                                        <label for="radial-position-x" class="sr-only">Horizontal position</label>
+                                        <input type="range" id="radial-position-x" class="range-input" min="0" max="100" value="50">
+                                        <span class="input-label">X: <span id="pos-x-value">50</span>%</span>
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="radial-position-y" class="sr-only">Vertical position</label>
+                                        <input type="range" id="radial-position-y" class="range-input" min="0" max="100" value="50">
+                                        <span class="input-label">Y: <span id="pos-y-value">50</span>%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="radial-size" class="form-label">Size</label>
+                                <select id="radial-size" class="select-input">
+                                    <option value="farthest-corner">Farthest Corner</option>
+                                    <option value="closest-corner">Closest Corner</option>
+                                    <option value="farthest-side">Farthest Side</option>
+                                    <option value="closest-side">Closest Side</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Conic Gradient Controls -->
+                        <div class="gradient-controls gradient-controls--conic" hidden>
+                            <div class="form-group">
+                                <label for="conic-angle" class="form-label">Start Angle</label>
+                                <div class="input-group">
+                                    <input type="range" id="conic-angle" class="range-input" min="0" max="360" value="0" aria-describedby="conic-angle-value">
+                                    <input type="number" id="conic-angle-value" class="number-input" min="0" max="360" value="0" aria-label="Start angle in degrees">
+                                    <span class="input-suffix">°</span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="conic-position-x" class="form-label">Center Position</label>
+                                <div class="position-controls">
+                                    <div class="input-group">
+                                        <label for="conic-position-x" class="sr-only">Horizontal center position</label>
+                                        <input type="range" id="conic-position-x" class="range-input" min="0" max="100" value="50">
+                                        <span class="input-label">X: <span id="conic-pos-x-value">50</span>%</span>
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="conic-position-y" class="sr-only">Vertical center position</label>
+                                        <input type="range" id="conic-position-y" class="range-input" min="0" max="100" value="50">
+                                        <span class="input-label">Y: <span id="conic-pos-y-value">50</span>%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Presets -->
+                    <section class="control-section">
+                        <h2 class="control-section__title">Presets</h2>
+                        <div class="presets-grid" role="grid" aria-label="Gradient presets">
+                            <!-- Preset items will be dynamically loaded -->
+                        </div>
+                        <button type="button" class="btn btn--ghost btn--small load-more-presets">
+                            Load More Presets
+                        </button>
+                    </section>
+                </aside>
+
+                <!-- Main Content Area -->
+                <div class="main-content">
+                    
+                    <!-- Live Preview -->
+                    <section class="preview-section" aria-label="Gradient preview">
+                        <h2 class="section-title">Live Preview</h2>
+                        <div class="preview-container">
+                            <div class="preview-canvas" id="preview-canvas" role="img" aria-label="Current gradient preview">
+                                <!-- Gradient preview will be applied as background -->
+                            </div>
+                            <div class="preview-info">
+                                <span class="preview-dimensions" id="preview-dimensions">800 × 400</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- CSS Output -->
+                    <section class="output-section" aria-label="Generated CSS code">
+                        <div class="section-header">
+                            <h2 class="section-title">CSS Output</h2>
+                            <div class="section-actions">
+                                <button type="button" class="btn btn--secondary btn--small" id="copy-css" aria-label="Copy CSS to clipboard">
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                                        <path d="M4 2a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H4zm0 2h8v8H4V4z"/>
+                                        <path d="M2 6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/>
+                                    </svg>
+                                    Copy
+                                </button>
+                                <button type="button" class="btn btn--primary btn--small" id="export-css" aria-label="Export CSS as file">
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                                        <path d="M8.5 1.5A1.5 1.5 0 0010 0h4a2 2 0 012 2v12a2 2 0 01-2 2H2a2 2 0 01-2-2V2a2 2 0 012-2h4a1.5 1.5 0 001.5 1.5v1A1.5 1.5 0 016 4H2v10h12V4h-4a1.5 1.5 0 01-1.5-1.5v-1z"/>
+                                    </svg>
+                                    Export
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="code-container">
+                            <pre class="code-block" role="textbox" aria-label="Generated CSS code" tabindex="0"><code id="css-output" class="css-code">background: linear-gradient(90deg, #ff0000 0%, #0000ff 100%);</code></pre>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Color Stop Editor Modal -->
+    <div class="modal" id="color-stop-modal" role="dialog" aria-labelledby="modal-title" aria-hidden="true">
+        <div class="modal__backdrop" aria-hidden="true"></div>
+        <div class="modal__container">
+            <div class="modal__header">
+                <h3 class="modal__title" id="modal-title">Edit Color Stop</h3>
+                <button type="button" class="modal__close" aria-label="Close modal">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="modal__body">
+                <div class="form-group">
+                    <label for="color-picker" class="form-label">Color</label>
+                    <div class="color-input-group">
+                        <input type="color" id="color-picker" class="color-input" value="#ff0000">
+                        <input type="text" id="color-hex" class="text-input" value="#ff0000" pattern="^#[0-9A-Fa-f]{6}$" aria-label="Hex color value">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="color-position" class="form-label">Position</label>
+                    <div class="input-group">
+                        <input type="range" id="color-position" class="range-input" min="0" max="100" value="50" aria-describedby="position-value">
+                        <input type="number" id="position-value" class="number-input" min="0" max="100" value="50" aria-label="Position percentage">
+                        <span class="input-suffix">%</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="color-opacity" class="form-label">Opacity</label>
+                    <div class="input-group">
+                        <input type="range" id="color-opacity" class="range-input" min="0" max="100" value="100" aria-describedby="opacity-value">
+                        <input type="number" id="opacity-value" class="number-input" min="0" max="100" value="100" aria-label="Opacity percentage">
+                        <span class="input-suffix">%</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal__footer">
+                <button type="button" class="btn btn--ghost" id="delete-color-stop">Delete</button>
+                <div class="modal__actions">
+                    <button type="button" class="btn btn--secondary" id="cancel-edit">Cancel</button>
+                    <button type="button" class="btn btn--primary" id="save-color-stop">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toast-container" aria-live="polite" aria-atomic="true">
+        <!-- Toast messages will be dynamically added here -->
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="js/app.js" type="module"></script>
+    
+    <!-- Service Worker for offline functionality (optional) -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => console.log('SW registered'))
+                    .catch(error => console.log('SW registration failed'));
+            });
+        }
+    </script>
+</body>
+</html>
