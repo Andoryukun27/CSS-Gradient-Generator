@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Simple HTTP server for CSS Gradient Generator
-Run this to serve the application locally and avoid CORS issues
+Smarter HTTP server for CSS Gradient Generator
+Serves index.html at root and auto-resolves JS files in /js/
 """
 
 import http.server
@@ -16,17 +16,16 @@ PORT = 8000
 HOST = 'localhost'
 
 class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
-    """Custom handler to set proper MIME types and default index.html"""
+    """Custom handler to fix MIME types and resolve missing JS from /js/"""
 
     def end_headers(self):
-        # Add CORS headers for development
+        # Add CORS headers
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
         super().end_headers()
 
     def guess_type(self, path):
-        """Set proper MIME types for different file extensions"""
         mimetype = super().guess_type(path)
         if path.endswith('.js') or path.endswith('.mjs'):
             return 'application/javascript'
@@ -37,16 +36,20 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         return mimetype
 
     def do_GET(self):
-        """Serve index.html when root path is requested"""
+        # Serve index.html if root
         if self.path == '/':
             self.path = '/index.html'
+
+        # If JS file is missing from root, try /js/
+        if self.path.endswith('.js') and not os.path.exists(self.translate_path(self.path)):
+            possible_path = '/js' + self.path
+            if os.path.exists(self.translate_path(possible_path)):
+                self.path = possible_path
+
         return super().do_GET()
 
 
 def main():
-    """Start the development server"""
-
-    # Change to the project directory
     project_dir = Path(__file__).parent
     os.chdir(project_dir)
 
@@ -56,29 +59,24 @@ def main():
     print(f"📄 Main page: http://{HOST}:{PORT}/index.html")
     print(f"⏹️  Press Ctrl+C to stop the server\n")
 
-    # Create server
     try:
         with socketserver.TCPServer((HOST, PORT), CustomHTTPRequestHandler) as httpd:
             print(f"✅ Server started successfully on port {PORT}")
-
-            # Try to open browser automatically
             try:
                 webbrowser.open(f'http://{HOST}:{PORT}/index.html')
                 print(f"🚀 Opening browser...")
             except Exception as e:
                 print(f"⚠️  Could not open browser automatically: {e}")
-                print(f"   Please open http://{HOST}:{PORT}/index.html manually")
 
-            print(f"\n🔄 Server is running... (Ctrl+C to stop)")
+            print(f"🔄 Server is running... (Ctrl+C to stop)")
             httpd.serve_forever()
 
     except KeyboardInterrupt:
         print(f"\n⏹️  Server stopped by user")
         sys.exit(0)
     except OSError as e:
-        if e.errno == 48:  # Address already in use
+        if e.errno == 48:
             print(f"❌ Port {PORT} is already in use")
-            print(f"   Try a different port or stop the existing server")
         else:
             print(f"❌ Server error: {e}")
         sys.exit(1)
@@ -89,4 +87,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-# Run the server if this script is executed directly

@@ -3,11 +3,13 @@
  * Coordinates all components and manages application state
  */
 
+// js/app.js
 import { GradientEngine } from './gradient.js';
 import { UIController } from './ui.js';
 import { ColorManager } from './color.js';
 import { ExportSystem } from './export.js';
 import { PresetManager } from './presets.js';
+
 
 class GradientGeneratorApp {
     constructor() {
@@ -31,8 +33,8 @@ class GradientGeneratorApp {
         this.handleColorStopChange = this.handleColorStopChange.bind(this);
         this.handlePresetSelect = this.handlePresetSelect.bind(this);
         this.handleExport = this.handleExport.bind(this);
-        this.handleUndo = this.handleUndo.bind(this);
-        this.handleRedo = this.handleRedo.bind(this);
+        this.undo = this.undo.bind(this);
+        this.redo = this.redo.bind(this);
     }
 
     /**
